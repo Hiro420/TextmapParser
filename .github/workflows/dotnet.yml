@@ -30,7 +30,7 @@ jobs:
         run: dotnet --info
 
       - name: Restore
-        run: dotnet restore TextmapParser.sln
+        run: dotnet restore TextmapParser.slnx
 
       - name: Build
         run: >
