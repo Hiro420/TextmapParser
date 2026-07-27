@@ -4,5 +4,5 @@ namespace TextmapParser;
 
 public interface IPlanReader
 {
-    DecodePlan Read(IReadOnlyList<Instruction> code);
+	DecodePlan Read(IReadOnlyList<Instruction> code);
 }
