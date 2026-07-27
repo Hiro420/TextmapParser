@@ -34,7 +34,7 @@ jobs:
 
       - name: Build
         run: >
-          dotnet build AceMetaUnpack.sln
+          dotnet build TextmapParser.slnx
           --configuration ${{ env.CONFIGURATION }}
           --no-restore
 
