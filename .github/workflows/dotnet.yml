@@ -2,36 +2,54 @@ name: .NET Build + Publish
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
   pull_request:
-    branches: ["main"]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: windows-latest
-    strategy:
-      matrix:
-        configuration: [Release]
+
+    env:
+      CONFIGURATION: Release
+      PROJECT_PATH: TextmapParser/TextmapParser.csproj
+      OUTPUT_PATH: out
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Setup .NET
+      - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: "10.0.x"
+
+      - name: Display .NET information
+        run: dotnet --info
 
       - name: Restore
-        run: dotnet restore AceMetaUnpack.sln
+        run: dotnet restore TextmapParser.sln
 
       - name: Build
-        run: dotnet build AceMetaUnpack.sln -c ${{ matrix.configuration }} --no-restore
+        run: >
+          dotnet build AceMetaUnpack.sln
+          --configuration ${{ env.CONFIGURATION }}
+          --no-restore
 
-      - name: Publish (self-contained)
-        run: dotnet publish .\TextmapParser\TextmapParser.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o .\out
+      - name: Publish Windows x64
+        run: >
+          dotnet publish ${{ env.PROJECT_PATH }}
+          --configuration ${{ env.CONFIGURATION }}
+          --runtime win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          --output ${{ env.OUTPUT_PATH }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: AceMetaUnpack-win-x64
-          path: .\out\
+          path: ${{ env.OUTPUT_PATH }}
+          if-no-files-found: error
